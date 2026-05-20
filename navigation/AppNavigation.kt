@@ -15,6 +15,7 @@ fun AppNavigation() {
     }
 
     AppScaffold(
+        title = currentDestination.title,
         bottomBar = {
             NavigationBar {
                 AppDestination.entries.forEach { destination ->

@@ -8,11 +8,15 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun AppScaffold(
+    title: String,
     bottomBar: @Composable () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.safeContentPadding(),
+        topBar = {
+            AppTopBar(title = title)
+        },
         bottomBar = bottomBar,
         content = content
     )
