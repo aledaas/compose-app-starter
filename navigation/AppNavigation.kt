@@ -1,10 +1,11 @@
 package com.aledaas.compose_app_starter.core.navigation
 
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import com.aledaas.compose_app_starter.core.layout.AppScaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.aledaas.compose_app_starter.core.layout.AdaptiveScaffold
 import com.aledaas.compose_app_starter.core.layout.ScreenContainer
 import com.aledaas.compose_app_starter.modules.wallet.WalletModule
 
@@ -14,19 +15,23 @@ fun AppNavigation() {
         mutableStateOf(AppDestination.WalletHome)
     }
 
-    AppScaffold(
+    AdaptiveScaffold(
         title = currentDestination.title,
-        bottomBar = {
-            NavigationBar {
-                AppDestination.entries.forEach { destination ->
-                    NavigationBarItem(
-                        selected = currentDestination == destination,
-                        onClick = { currentDestination = destination },
-                        label = { Text(destination.label) },
-                        icon = {}
-                    )
+        navigationBar = {
+            AppBottomNavigationBar(
+                currentDestination = currentDestination,
+                onDestinationSelected = {
+                    currentDestination = it
                 }
-            }
+            )
+        },
+        navigationRail = {
+            AppNavigationRail(
+                currentDestination = currentDestination,
+                onDestinationSelected = {
+                    currentDestination = it
+                }
+            )
         }
     ) { paddingValues ->
         ScreenContainer(paddingValues) {
