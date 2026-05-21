@@ -1,0 +1,7 @@
+TEAM_ID=
+
+PRODUCT_NAME=Composeappstarter
+PRODUCT_BUNDLE_IDENTIFIER=com.aledaas.compose_app_starter.Composeappstarter$(TEAM_ID)
+
+CURRENT_PROJECT_VERSION=1
+MARKETING_VERSION=1.0
