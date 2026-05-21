@@ -40,23 +40,28 @@ fun WalletHomeScreen() {
 
 @Composable
 private fun BalanceHeader() {
-    Row(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        elevated = false
     ) {
-        Column {
-            Text(
-                text = "Available balance",
-                style = MaterialTheme.typography.labelLarge
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = "Available balance",
+                    style = MaterialTheme.typography.labelLarge
+                )
 
-            Text(
-                text = "$1,240.00",
-                style = MaterialTheme.typography.headlineLarge
-            )
+                Text(
+                    text = "$1,240.00",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+            }
+
+            AppStatusBadge(status = AppStatus.Offline)
         }
-
-        AppStatusBadge(status = AppStatus.Offline)
     }
 }
 
