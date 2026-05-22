@@ -9,6 +9,8 @@ import com.aledaas.compose_app_starter.modules.auth.application.SignOutUseCase
 import kotlinx.coroutines.delay
 import com.aledaas.compose_app_starter.core.feedback.AppFeedbackController
 import com.aledaas.compose_app_starter.core.auth.SessionManager
+import com.aledaas.compose_app_starter.core.security.BiometricAuthenticator
+import com.aledaas.compose_app_starter.core.security.FakeBiometricAuthenticator
 
 object AppContainer {
 
@@ -36,6 +38,9 @@ object AppContainer {
     }
     val sessionManager: SessionManager by lazy {
         SessionManager(authRepository)
+    }
+    val biometricAuthenticator: BiometricAuthenticator by lazy {
+        FakeBiometricAuthenticator()
     }
 }
 

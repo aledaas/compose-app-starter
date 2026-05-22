@@ -14,7 +14,9 @@ import com.aledaas.compose_app_starter.core.designsystem.AppSpacing
 fun LoginScreen(
     config: AuthModuleConfig = AuthModuleConfig(),
     uiState: LoginUiState = LoginUiState.Idle,
-    onSignIn: (email: String, password: String) -> Unit = { _, _ -> }
+    biometricAvailable: Boolean = false,
+    onSignIn: (email: String, password: String) -> Unit = { _, _ -> },
+    onBiometricSignIn: () -> Unit = {}
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -55,6 +57,13 @@ fun LoginScreen(
                     onSignIn(email, password)
                 }
             )
+
+            if (config.allowBiometrics) {
+                BiometricLoginButton(
+                    enabled = biometricAvailable && !isLoading,
+                    onClick = onBiometricSignIn
+                )
+            }
 
             if (isLoading) {
                 AppLoadingState(message = "Checking credentials...")
