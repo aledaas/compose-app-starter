@@ -6,6 +6,8 @@ import com.aledaas.compose_app_starter.core.auth.AuthSession
 import com.aledaas.compose_app_starter.core.auth.AuthUser
 import com.aledaas.compose_app_starter.modules.auth.application.SignInUseCase
 import com.aledaas.compose_app_starter.modules.auth.application.SignOutUseCase
+import kotlinx.coroutines.delay
+import com.aledaas.compose_app_starter.core.feedback.AppFeedbackController
 
 object AppContainer {
 
@@ -27,6 +29,9 @@ object AppContainer {
             signOutUseCase = signOutUseCase
         )
     }
+    val feedbackController: AppFeedbackController by lazy {
+        AppFeedbackController()
+    }
 }
 
 private class FakeAuthRepository : AuthRepository {
@@ -41,6 +46,9 @@ private class FakeAuthRepository : AuthRepository {
         email: String,
         password: String
     ): AuthSession {
+
+        delay(1500)
+
         session = AuthSession(
             accessToken = "fake-token",
             user = AuthUser(
