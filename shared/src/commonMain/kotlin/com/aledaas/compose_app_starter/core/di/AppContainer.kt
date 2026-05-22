@@ -1,5 +1,6 @@
 package com.aledaas.compose_app_starter.core.di
 
+import com.aledaas.compose_app_starter.core.auth.AuthController
 import com.aledaas.compose_app_starter.core.auth.AuthRepository
 import com.aledaas.compose_app_starter.core.auth.AuthSession
 import com.aledaas.compose_app_starter.core.auth.AuthUser
@@ -19,6 +20,13 @@ object AppContainer {
     val signOutUseCase: SignOutUseCase by lazy {
         SignOutUseCase(authRepository)
     }
+
+    val authController: AuthController by lazy {
+        AuthController(
+            signInUseCase = signInUseCase,
+            signOutUseCase = signOutUseCase
+        )
+    }
 }
 
 private class FakeAuthRepository : AuthRepository {
@@ -33,7 +41,6 @@ private class FakeAuthRepository : AuthRepository {
         email: String,
         password: String
     ): AuthSession {
-
         session = AuthSession(
             accessToken = "fake-token",
             user = AuthUser(
