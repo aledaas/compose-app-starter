@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.aledaas.compose_app_starter.core.components.AppPrimaryButton
+import com.aledaas.compose_app_starter.core.components.form.AppPasswordField
+import com.aledaas.compose_app_starter.core.components.form.AppTextField
 import com.aledaas.compose_app_starter.core.designsystem.AppSpacing
 import com.aledaas.compose_app_starter.core.layout.AppPage
 
@@ -39,17 +41,16 @@ fun LoginScreen(
         Column(
             verticalArrangement = Arrangement.spacedBy(AppSpacing.md)
         ) {
-            OutlinedTextField(
+            AppTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") }
+                label = "Email"
             )
 
-            OutlinedTextField(
+            AppPasswordField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
-                visualTransformation = PasswordVisualTransformation()
+                label = "Password"
             )
         }
 
