@@ -8,10 +8,16 @@ import com.aledaas.compose_app_starter.modules.auth.presentation.LoginUiState
 
 class AuthController(
     private val signInUseCase: SignInUseCase,
-    private val signOutUseCase: SignOutUseCase
+    private val signOutUseCase: SignOutUseCase,
+    private val sessionManager: SessionManager
 ) {
-    val authState = mutableStateOf<AuthState>(AuthState.Unauthenticated)
+    val authState = mutableStateOf<AuthState>(AuthState.Unknown)
     val loginUiState = mutableStateOf<LoginUiState>(LoginUiState.Idle)
+
+    suspend fun restoreSession() {
+        authState.value = AuthState.Unknown
+        authState.value = sessionManager.restore()
+    }
 
     suspend fun signIn(email: String, password: String): Boolean {
         loginUiState.value = LoginUiState.Loading

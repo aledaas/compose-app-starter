@@ -8,6 +8,7 @@ import com.aledaas.compose_app_starter.modules.auth.application.SignInUseCase
 import com.aledaas.compose_app_starter.modules.auth.application.SignOutUseCase
 import kotlinx.coroutines.delay
 import com.aledaas.compose_app_starter.core.feedback.AppFeedbackController
+import com.aledaas.compose_app_starter.core.auth.SessionManager
 
 object AppContainer {
 
@@ -26,11 +27,15 @@ object AppContainer {
     val authController: AuthController by lazy {
         AuthController(
             signInUseCase = signInUseCase,
-            signOutUseCase = signOutUseCase
+            signOutUseCase = signOutUseCase,
+            sessionManager = sessionManager
         )
     }
     val feedbackController: AppFeedbackController by lazy {
         AppFeedbackController()
+    }
+    val sessionManager: SessionManager by lazy {
+        SessionManager(authRepository)
     }
 }
 

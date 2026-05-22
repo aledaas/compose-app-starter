@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.aledaas.compose_app_starter.core.auth.AuthState
+import com.aledaas.compose_app_starter.core.components.AppLoadingState
 import com.aledaas.compose_app_starter.core.components.AppSnackbarHost
 import com.aledaas.compose_app_starter.core.designsystem.AppSpacing
 import com.aledaas.compose_app_starter.core.designsystem.AppTheme
@@ -29,6 +30,10 @@ fun App() {
         val feedbackMessage by AppContainer.feedbackController.currentMessage
         val coroutineScope = rememberCoroutineScope()
 
+        LaunchedEffect(Unit) {
+            AppContainer.authController.restoreSession()
+        }
+
         LaunchedEffect(feedbackMessage) {
             if (feedbackMessage != null) {
                 delay(3000)
@@ -40,13 +45,22 @@ fun App() {
             modifier = Modifier.fillMaxSize()
         ) {
             when (authState) {
-                AuthState.Unknown,
+                AuthState.Unknown -> {
+                    AppLoadingState(
+                        message = "Restoring session..."
+                    )
+                }
+
                 AuthState.Unauthenticated -> {
                     LoginScreen(
                         uiState = loginUiState,
                         onSignIn = { email, password ->
                             coroutineScope.launch {
-                                val signedIn = AppContainer.authController.signIn(email, password)
+                                val signedIn = AppContainer.authController.signIn(
+                                    email,
+                                    password
+                                )
+
                                 if (signedIn) {
                                     AppContainer.feedbackController.show(
                                         message = "Successfully signed in"
