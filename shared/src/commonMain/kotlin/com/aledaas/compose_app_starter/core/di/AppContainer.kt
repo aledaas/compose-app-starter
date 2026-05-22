@@ -13,7 +13,12 @@ import com.aledaas.compose_app_starter.core.security.BiometricAuthenticator
 import com.aledaas.compose_app_starter.core.security.FakeBiometricAuthenticator
 import com.aledaas.compose_app_starter.core.security.FakePinAuthenticator
 import com.aledaas.compose_app_starter.core.security.PinAuthenticator
-
+import com.aledaas.compose_app_starter.core.network.ApiClient
+import com.aledaas.compose_app_starter.core.network.ApiConfig
+import com.aledaas.compose_app_starter.core.network.HttpClientFactory
+import com.aledaas.compose_app_starter.core.onboarding.OnboardingController
+import com.aledaas.compose_app_starter.core.onboarding.OnboardingRepository
+import com.aledaas.compose_app_starter.infrastructure.onboarding.RemoteOnboardingRepository
 
 object AppContainer {
 
@@ -50,6 +55,23 @@ object AppContainer {
 
     val pinAuthenticator: PinAuthenticator by lazy {
         FakePinAuthenticator()
+    }
+
+    val onboardingRepository: OnboardingRepository by lazy {
+        RemoteOnboardingRepository(apiClient)
+    }
+
+    val onboardingController: OnboardingController by lazy {
+        OnboardingController(onboardingRepository)
+    }
+
+    val apiClient: ApiClient by lazy {
+        ApiClient(
+            httpClient = HttpClientFactory.create(),
+            config = ApiConfig(
+                baseUrl = "http://10.0.2.2:8000"
+            )
+        )
     }
 }
 
