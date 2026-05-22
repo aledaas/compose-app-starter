@@ -13,10 +13,10 @@ class AuthController(
     val authState = mutableStateOf<AuthState>(AuthState.Unauthenticated)
     val loginUiState = mutableStateOf<LoginUiState>(LoginUiState.Idle)
 
-    suspend fun signIn(email: String, password: String) {
+    suspend fun signIn(email: String, password: String): Boolean {
         loginUiState.value = LoginUiState.Loading
 
-        try {
+        return try {
             val session = signInUseCase(
                 AuthCredentials(
                     email = email,
@@ -26,10 +26,14 @@ class AuthController(
 
             authState.value = AuthState.Authenticated(session)
             loginUiState.value = LoginUiState.Idle
+
+            true
         } catch (exception: Exception) {
             loginUiState.value = LoginUiState.Error(
                 message = exception.message ?: "Unable to sign in"
             )
+
+            false
         }
     }
 

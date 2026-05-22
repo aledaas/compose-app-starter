@@ -46,11 +46,12 @@ fun App() {
                         uiState = loginUiState,
                         onSignIn = { email, password ->
                             coroutineScope.launch {
-                                AppContainer.authController.signIn(email, password)
-
-                                AppContainer.feedbackController.show(
-                                    message = "Successfully signed in"
-                                )
+                                val signedIn = AppContainer.authController.signIn(email, password)
+                                if (signedIn) {
+                                    AppContainer.feedbackController.show(
+                                        message = "Successfully signed in"
+                                    )
+                                }
                             }
                         }
                     )
