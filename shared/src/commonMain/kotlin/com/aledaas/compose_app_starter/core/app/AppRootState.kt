@@ -10,6 +10,7 @@ import com.aledaas.compose_app_starter.core.di.AppContainer
 import com.aledaas.compose_app_starter.core.navigation.AppNavigation
 import com.aledaas.compose_app_starter.modules.auth.presentation.BiometricUiState
 import com.aledaas.compose_app_starter.modules.auth.presentation.LoginScreen
+import com.aledaas.compose_app_starter.modules.auth.presentation.PinUnlockScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -17,6 +18,7 @@ fun AppRootState() {
     val authState by AppContainer.authController.authState
     val loginUiState by AppContainer.authController.loginUiState
     val biometricUiState by AppContainer.authController.biometricUiState
+    val pinErrorMessage by AppContainer.authController.pinErrorMessage
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -29,6 +31,23 @@ fun AppRootState() {
         AuthState.Unknown -> {
             AppLoadingState(
                 message = "Restoring session..."
+            )
+        }
+
+        AuthState.Locked -> {
+            PinUnlockScreen(
+                errorMessage = pinErrorMessage,
+                onUnlock = { pin ->
+                    coroutineScope.launch {
+                        val unlocked = AppContainer.authController.pinUnlock(pin)
+
+                        if (unlocked) {
+                            AppContainer.feedbackController.show(
+                                message = "Unlocked with PIN"
+                            )
+                        }
+                    }
+                }
             )
         }
 

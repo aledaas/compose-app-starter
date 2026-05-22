@@ -14,6 +14,7 @@ import com.aledaas.compose_app_starter.core.security.FakeBiometricAuthenticator
 import com.aledaas.compose_app_starter.core.security.FakePinAuthenticator
 import com.aledaas.compose_app_starter.core.security.PinAuthenticator
 
+
 object AppContainer {
 
     val authRepository: AuthRepository by lazy {
@@ -33,7 +34,8 @@ object AppContainer {
             signInUseCase = signInUseCase,
             signOutUseCase = signOutUseCase,
             sessionManager = sessionManager,
-            biometricAuthenticator = biometricAuthenticator
+            biometricAuthenticator = biometricAuthenticator,
+            pinAuthenticator = pinAuthenticator
         )
     }
     val feedbackController: AppFeedbackController by lazy {
