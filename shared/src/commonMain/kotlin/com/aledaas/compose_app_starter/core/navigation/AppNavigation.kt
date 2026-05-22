@@ -16,18 +16,26 @@ fun AppNavigation() {
         mutableStateOf(AppDestination.WalletHome)
     }
 
+    fun navigateTo(destination: AppDestination) {
+        if (destination == currentDestination) {
+            return
+        }
+
+        currentDestination = destination
+    }
+
     AdaptiveScaffold(
         title = currentDestination.title,
         navigationBar = {
             AppBottomNavigationBar(
                 currentDestination = currentDestination,
-                onDestinationSelected = { currentDestination = it }
+                onDestinationSelected = ::navigateTo
             )
         },
         navigationRail = {
             AppNavigationRail(
                 currentDestination = currentDestination,
-                onDestinationSelected = { currentDestination = it }
+                onDestinationSelected = ::navigateTo
             )
         }
     ) { paddingValues ->

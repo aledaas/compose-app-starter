@@ -17,6 +17,7 @@ import com.aledaas.compose_app_starter.core.components.AppStatusBadge
 import com.aledaas.compose_app_starter.core.designsystem.AppSpacing
 import com.aledaas.compose_app_starter.core.layout.AppPage
 import com.aledaas.compose_app_starter.core.layout.AppResponsiveGrid
+import com.aledaas.compose_app_starter.core.components.AppEmptyState
 
 @Composable
 fun WalletHomeScreen() {
@@ -111,9 +112,9 @@ private fun LatestActivity() {
         AppCard(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = "No activity yet.",
-                style = MaterialTheme.typography.bodyMedium
+            AppEmptyState(
+                title = "No activity yet",
+                message = "Your latest movements will appear here."
             )
         }
     }
