@@ -1,5 +1,6 @@
 package com.aledaas.compose_app_starter.core.navigation
 
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
@@ -13,17 +14,25 @@ fun AppBottomNavigationBar(
     onDestinationSelected: (AppDestination) -> Unit
 ) {
     NavigationBar {
+
         AppDestination.entries.forEach { destination ->
+
             NavigationBarItem(
                 selected = currentDestination == destination,
+
                 onClick = {
                     onDestinationSelected(destination)
                 },
+
                 icon = {
-                    Text(text = destination.iconLabel)
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = destination.label
+                    )
                 },
+
                 label = {
-                    Text(text = destination.label)
+                    Text(destination.label)
                 }
             )
         }
@@ -36,17 +45,25 @@ fun AppNavigationRail(
     onDestinationSelected: (AppDestination) -> Unit
 ) {
     NavigationRail {
+
         AppDestination.entries.forEach { destination ->
+
             NavigationRailItem(
                 selected = currentDestination == destination,
+
                 onClick = {
                     onDestinationSelected(destination)
                 },
+
                 icon = {
-                    Text(text = destination.iconLabel)
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = destination.label
+                    )
                 },
+
                 label = {
-                    Text(text = destination.label)
+                    Text(destination.label)
                 }
             )
         }

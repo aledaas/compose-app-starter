@@ -1,5 +1,6 @@
 package com.aledaas.compose_app_starter.core.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -7,20 +8,30 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import com.aledaas.compose_app_starter.core.designsystem.AppSpacing
 import com.aledaas.compose_app_starter.core.designsystem.AppSurfaces
+import com.aledaas.compose_app_starter.core.motion.AppAnimations
 
 @Composable
 fun AppCard(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(AppSpacing.md),
     elevated: Boolean = true,
+    animated: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val scale by animateFloatAsState(
+        targetValue = if (animated) 1f else 1f,
+        animationSpec = AppAnimations.MediumTween,
+        label = "AppCardScale"
+    )
+
     Card(
-        modifier = modifier,
+        modifier = modifier.scale(scale),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
             containerColor = AppSurfaces.PrimarySurface

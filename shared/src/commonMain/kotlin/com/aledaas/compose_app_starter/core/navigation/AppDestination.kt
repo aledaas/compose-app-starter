@@ -1,33 +1,46 @@
 package com.aledaas.compose_app_starter.core.navigation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Sync
+import androidx.compose.ui.graphics.vector.ImageVector
+
 enum class AppDestination(
     val label: String,
     val title: String,
-    val iconLabel: String
+    val icon: ImageVector
 ) {
+
     WalletHome(
         label = "Home",
         title = "Wallet",
-        iconLabel = "H"
+        icon = Icons.Outlined.AccountBalanceWallet
     ),
+
     CreateBearerCash(
         label = "Create",
         title = "Create Bearer Cash",
-        iconLabel = "+"
+        icon = Icons.Outlined.AddCircle
     ),
+
     ReceiveBearerCash(
         label = "Receive",
         title = "Receive Bearer Cash",
-        iconLabel = "R"
+        icon = Icons.Outlined.Download
     ),
+
     Ledger(
         label = "Ledger",
         title = "Ledger",
-        iconLabel = "L"
+        icon = Icons.Outlined.History
     ),
+
     Sync(
         label = "Sync",
         title = "Sync",
-        iconLabel = "S"
+        icon = Icons.Outlined.Sync
     )
 }

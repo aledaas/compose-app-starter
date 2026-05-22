@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.aledaas.compose_app_starter.core.layout.AdaptiveScaffold
 import com.aledaas.compose_app_starter.core.layout.ScreenContainer
+import com.aledaas.compose_app_starter.core.motion.AppAnimatedContent
 import com.aledaas.compose_app_starter.modules.wallet.WalletModule
 
 @Composable
@@ -20,24 +21,22 @@ fun AppNavigation() {
         navigationBar = {
             AppBottomNavigationBar(
                 currentDestination = currentDestination,
-                onDestinationSelected = {
-                    currentDestination = it
-                }
+                onDestinationSelected = { currentDestination = it }
             )
         },
         navigationRail = {
             AppNavigationRail(
                 currentDestination = currentDestination,
-                onDestinationSelected = {
-                    currentDestination = it
-                }
+                onDestinationSelected = { currentDestination = it }
             )
         }
     ) { paddingValues ->
         ScreenContainer(paddingValues) {
-            WalletModule(
-                destination = currentDestination
-            )
+            AppAnimatedContent(
+                targetState = currentDestination
+            ) { destination ->
+                WalletModule(destination = destination)
+            }
         }
     }
 }
