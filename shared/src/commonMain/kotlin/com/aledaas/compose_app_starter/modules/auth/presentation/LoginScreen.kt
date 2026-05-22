@@ -2,16 +2,11 @@ package com.aledaas.compose_app_starter.modules.auth.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.aledaas.compose_app_starter.core.components.AppPrimaryButton
 import com.aledaas.compose_app_starter.core.components.form.AppPasswordField
 import com.aledaas.compose_app_starter.core.components.form.AppTextField
 import com.aledaas.compose_app_starter.core.designsystem.AppSpacing
-import com.aledaas.compose_app_starter.core.layout.AppPage
 
 @Composable
 fun LoginScreen(
@@ -21,23 +16,7 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    AppPage(
-        verticalArrangement = Arrangement.spacedBy(AppSpacing.lg)
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(AppSpacing.sm)
-        ) {
-            Text(
-                text = config.loginTitle,
-                style = MaterialTheme.typography.headlineLarge
-            )
-
-            Text(
-                text = config.loginSubtitle,
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-
+    AuthScaffold(config = config) {
         Column(
             verticalArrangement = Arrangement.spacedBy(AppSpacing.md)
         ) {
@@ -52,14 +31,14 @@ fun LoginScreen(
                 onValueChange = { password = it },
                 label = "Password"
             )
-        }
 
-        AppPrimaryButton(
-            text = "Sign in",
-            enabled = email.isNotBlank() && password.isNotBlank(),
-            onClick = {
-                onSignIn(email, password)
-            }
-        )
+            AppPrimaryButton(
+                text = "Sign in",
+                enabled = email.isNotBlank() && password.isNotBlank(),
+                onClick = {
+                    onSignIn(email, password)
+                }
+            )
+        }
     }
 }
