@@ -18,6 +18,9 @@ import com.aledaas.compose_app_starter.core.designsystem.AppSpacing
 import com.aledaas.compose_app_starter.core.layout.AppPage
 import com.aledaas.compose_app_starter.core.layout.AppResponsiveGrid
 import com.aledaas.compose_app_starter.core.components.AppEmptyState
+import com.aledaas.compose_app_starter.core.di.AppContainer
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 
 @Composable
 fun WalletHomeScreen() {
@@ -89,6 +92,8 @@ private fun BearerCashCard() {
 
 @Composable
 private fun WalletActions() {
+    val coroutineScope = rememberCoroutineScope()
+
     AppSection(title = "Actions") {
         Column(
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm)
@@ -101,6 +106,15 @@ private fun WalletActions() {
             AppSecondaryButton(
                 text = "Receive Bearer Cash",
                 onClick = {}
+            )
+
+            AppSecondaryButton(
+                text = "Sign out",
+                onClick = {
+                    coroutineScope.launch {
+                        AppContainer.authController.signOut()
+                    }
+                }
             )
         }
     }
