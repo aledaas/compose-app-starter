@@ -5,14 +5,24 @@ import com.aledaas.compose_app_starter.modules.auth.application.SignInUseCase
 import com.aledaas.compose_app_starter.modules.auth.application.SignOutUseCase
 import com.aledaas.compose_app_starter.modules.auth.domain.AuthCredentials
 import com.aledaas.compose_app_starter.modules.auth.presentation.LoginUiState
+import com.aledaas.compose_app_starter.core.security.BiometricAuthResult
+import com.aledaas.compose_app_starter.core.security.BiometricAuthenticator
+import com.aledaas.compose_app_starter.core.security.BiometricAvailability
+import com.aledaas.compose_app_starter.modules.auth.presentation.BiometricUiState
 
 class AuthController(
     private val signInUseCase: SignInUseCase,
     private val signOutUseCase: SignOutUseCase,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val biometricAuthenticator: BiometricAuthenticator
 ) {
     val authState = mutableStateOf<AuthState>(AuthState.Unknown)
     val loginUiState = mutableStateOf<LoginUiState>(LoginUiState.Idle)
+
+    val biometricUiState =
+        mutableStateOf<BiometricUiState>(
+            BiometricUiState.Unknown
+        )
 
     suspend fun restoreSession() {
         authState.value = AuthState.Unknown
@@ -47,5 +57,60 @@ class AuthController(
         signOutUseCase()
         authState.value = AuthState.Unauthenticated
         loginUiState.value = LoginUiState.Idle
+    }
+
+    suspend fun checkBiometrics() {
+
+        biometricUiState.value =
+            when (biometricAuthenticator.availability()) {
+
+                BiometricAvailability.Available ->
+                    BiometricUiState.Available
+
+                else ->
+                    BiometricUiState.Unavailable
+            }
+    }
+
+    suspend fun biometricSignIn(): Boolean {
+
+        biometricUiState.value =
+            BiometricUiState.Authenticating
+
+        return when (
+            biometricAuthenticator.authenticate(
+                reason = "Unlock your account"
+            )
+        ) {
+
+            BiometricAuthResult.Success -> {
+
+                authState.value =
+                    AuthState.Authenticated(
+                        session = AuthSession(
+                            accessToken = "biometric-token",
+
+                            user = AuthUser(
+                                id = "1",
+                                name = "Alejandro",
+                                email = "alejandro@demo.com"
+                            )
+                        )
+                    )
+
+                biometricUiState.value =
+                    BiometricUiState.Available
+
+                true
+            }
+
+            else -> {
+
+                biometricUiState.value =
+                    BiometricUiState.Available
+
+                false
+            }
+        }
     }
 }
