@@ -12,14 +12,15 @@ class FakeOnboardingRepository : OnboardingRepository {
     }
 
     override suspend fun start(): OnboardingSession {
+
         delay(1000)
 
         status = OnboardingStatus.InProgress
 
         return OnboardingSession(
             id = "fake-onboarding-session",
-            provider = "fake",
-            redirectUrl = null,
+            provider = "bridge",
+            redirectUrl = "https://bridge.xyz",
             status = status
         )
     }

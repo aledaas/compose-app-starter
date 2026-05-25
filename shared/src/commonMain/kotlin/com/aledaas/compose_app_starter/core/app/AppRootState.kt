@@ -3,15 +3,19 @@ package com.aledaas.compose_app_starter.core.app
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.aledaas.compose_app_starter.core.auth.AuthState
 import com.aledaas.compose_app_starter.core.components.AppLoadingState
 import com.aledaas.compose_app_starter.core.di.AppContainer
+import com.aledaas.compose_app_starter.core.hostedflow.HostedFlowSession
 import com.aledaas.compose_app_starter.core.navigation.AppNavigation
 import com.aledaas.compose_app_starter.core.onboarding.OnboardingStatus
 import com.aledaas.compose_app_starter.modules.auth.presentation.BiometricUiState
 import com.aledaas.compose_app_starter.modules.auth.presentation.LoginScreen
 import com.aledaas.compose_app_starter.modules.auth.presentation.PinUnlockScreen
+import com.aledaas.compose_app_starter.modules.hostedflow.presentation.HostedFlowScreen
 import com.aledaas.compose_app_starter.modules.onboarding.presentation.OnboardingPendingScreen
 import com.aledaas.compose_app_starter.modules.onboarding.presentation.OnboardingRejectedScreen
 import com.aledaas.compose_app_starter.modules.onboarding.presentation.OnboardingWelcomeScreen
@@ -19,50 +23,39 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AppRootState() {
-
     val authState by AppContainer.authController.authState
     val loginUiState by AppContainer.authController.loginUiState
     val biometricUiState by AppContainer.authController.biometricUiState
     val pinErrorMessage by AppContainer.authController.pinErrorMessage
-
-    val onboardingStatus by
-    AppContainer.onboardingController.status
+    val onboardingStatus by AppContainer.onboardingController.status
 
     val coroutineScope = rememberCoroutineScope()
 
+    val hostedFlowUrl = remember {
+        mutableStateOf<String?>(null)
+    }
+
     LaunchedEffect(Unit) {
-
         AppContainer.authController.restoreSession()
-
         AppContainer.authController.checkBiometrics()
-
         AppContainer.onboardingController.restore()
     }
 
     when (authState) {
-
         AuthState.Unknown -> {
-
             AppLoadingState(
                 message = "Restoring session..."
             )
         }
 
         AuthState.Locked -> {
-
             PinUnlockScreen(
                 errorMessage = pinErrorMessage,
-
                 onUnlock = { pin ->
-
                     coroutineScope.launch {
-
-                        val unlocked =
-                            AppContainer.authController
-                                .pinUnlock(pin)
+                        val unlocked = AppContainer.authController.pinUnlock(pin)
 
                         if (unlocked) {
-
                             AppContainer.feedbackController.show(
                                 message = "Unlocked with PIN"
                             )
@@ -73,48 +66,30 @@ fun AppRootState() {
         }
 
         AuthState.Unauthenticated -> {
-
             LoginScreen(
                 uiState = loginUiState,
-
-                biometricAvailable =
-                    biometricUiState
-                            is BiometricUiState.Available,
-
+                biometricAvailable = biometricUiState is BiometricUiState.Available,
                 onSignIn = { email, password ->
-
                     coroutineScope.launch {
-
-                        val signedIn =
-                            AppContainer.authController
-                                .signIn(
-                                    email = email,
-                                    password = password
-                                )
+                        val signedIn = AppContainer.authController.signIn(
+                            email = email,
+                            password = password
+                        )
 
                         if (signedIn) {
-
                             AppContainer.feedbackController.show(
-                                message =
-                                    "Successfully signed in"
+                                message = "Successfully signed in"
                             )
                         }
                     }
                 },
-
                 onBiometricSignIn = {
-
                     coroutineScope.launch {
-
-                        val authenticated =
-                            AppContainer.authController
-                                .biometricSignIn()
+                        val authenticated = AppContainer.authController.biometricSignIn()
 
                         if (authenticated) {
-
                             AppContainer.feedbackController.show(
-                                message =
-                                    "Unlocked with biometrics"
+                                message = "Unlocked with biometrics"
                             )
                         }
                     }
@@ -123,11 +98,8 @@ fun AppRootState() {
         }
 
         is AuthState.Authenticated -> {
-
             when (onboardingStatus) {
-
                 OnboardingStatus.Unknown -> {
-
                     AppLoadingState(
                         message = "Loading onboarding..."
                     )
@@ -135,70 +107,74 @@ fun AppRootState() {
 
                 OnboardingStatus.NotStarted,
                 OnboardingStatus.InProgress -> {
-
-                    OnboardingWelcomeScreen(
-
-                        onStart = {
-
-                            coroutineScope.launch {
-
-                                AppContainer
-                                    .onboardingController
-                                    .start()
+                    if (hostedFlowUrl.value != null) {
+                        HostedFlowScreen(
+                            session = HostedFlowSession(
+                                id = "bridge-flow",
+                                provider = "Bridge",
+                                url = hostedFlowUrl.value!!
+                            ),
+                            onOpen = { url ->
+                                AppContainer.urlOpener.open(url)
+                            },
+                            onCompleted = {
+                                coroutineScope.launch {
+                                    hostedFlowUrl.value = null
+                                    AppContainer.onboardingController.refresh()
+                                }
+                            },
+                            onCancelled = {
+                                hostedFlowUrl.value = null
                             }
-                        },
+                        )
+                    } else {
+                        OnboardingWelcomeScreen(
+                            onStart = {
+                                coroutineScope.launch {
+                                    val session = AppContainer
+                                        .onboardingRepository
+                                        .start()
 
-                        onRefresh = {
+                                    hostedFlowUrl.value = session.redirectUrl
 
-                            coroutineScope.launch {
-
-                                AppContainer
-                                    .onboardingController
-                                    .refresh()
+                                    if (hostedFlowUrl.value == null) {
+                                        AppContainer.onboardingController.refresh()
+                                    }
+                                }
+                            },
+                            onRefresh = {
+                                coroutineScope.launch {
+                                    AppContainer.onboardingController.refresh()
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
 
                 OnboardingStatus.PendingReview -> {
-
                     OnboardingPendingScreen(
-
                         onRefresh = {
-
                             coroutineScope.launch {
-
-                                AppContainer
-                                    .onboardingController
-                                    .refresh()
+                                AppContainer.onboardingController.refresh()
                             }
                         }
                     )
                 }
 
                 is OnboardingStatus.Rejected -> {
-
-                    val rejected =
-                        onboardingStatus as OnboardingStatus.Rejected
+                    val rejected = onboardingStatus as OnboardingStatus.Rejected
 
                     OnboardingRejectedScreen(
-
                         reason = rejected.reason,
-
                         onRestart = {
-
                             coroutineScope.launch {
-
-                                AppContainer
-                                    .onboardingController
-                                    .start()
+                                AppContainer.onboardingController.start()
                             }
                         }
                     )
                 }
 
                 OnboardingStatus.Approved -> {
-
                     AppNavigation()
                 }
             }

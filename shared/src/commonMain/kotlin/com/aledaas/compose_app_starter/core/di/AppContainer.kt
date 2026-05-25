@@ -19,7 +19,9 @@ import com.aledaas.compose_app_starter.core.network.HttpClientFactory
 import com.aledaas.compose_app_starter.core.onboarding.OnboardingController
 import com.aledaas.compose_app_starter.core.onboarding.OnboardingRepository
 import com.aledaas.compose_app_starter.infrastructure.onboarding.RemoteOnboardingRepository
-
+import com.aledaas.compose_app_starter.core.onboarding.FakeOnboardingRepository
+import com.aledaas.compose_app_starter.core.platform.FakeUrlOpener
+import com.aledaas.compose_app_starter.core.platform.UrlOpener
 object AppContainer {
 
     val authRepository: AuthRepository by lazy {
@@ -58,7 +60,7 @@ object AppContainer {
     }
 
     val onboardingRepository: OnboardingRepository by lazy {
-        RemoteOnboardingRepository(apiClient)
+        FakeOnboardingRepository()
     }
 
     val onboardingController: OnboardingController by lazy {
@@ -72,6 +74,10 @@ object AppContainer {
                 baseUrl = "http://10.0.2.2:8000"
             )
         )
+    }
+
+    val urlOpener: UrlOpener by lazy {
+        FakeUrlOpener()
     }
 }
 
